@@ -1,122 +1,75 @@
 import { expect } from "chai";
-import { GildedRose } from "../app/gilded-rose";
-import {
-    ConcertTicketItem,
-    ConjuredItem,
-    DegradingItem,
-    ImprovingItem,
-    LegendaryItem,
-} from "../app/item";
+import { Item, GildedRose } from "../app/gilded-rose";
+
+//-------- day 0 --------
+//name, sellIn, quality
+//+5 Dexterity Vest 10 20
+//Aged Brie 2 0
+//Elixir of the Mongoose 5 7
+//Sulfuras, Hand of Ragnaros 0 80
+//Sulfuras, Hand of Ragnaros -1 80
+//Backstage passes to a TAFKAL80ETC concert 15 20
+//Backstage passes to a TAFKAL80ETC concert 10 49
+//Backstage passes to a TAFKAL80ETC concert 5 49
+//Conjured Mana Cake 3 6
+
+//-------- day 1 --------
+//name, sellIn, quality
+//+5 Dexterity Vest 9 19
+//Aged Brie 1 1
+//Elixir of the Mongoose 4 6
+//Sulfuras, Hand of Ragnaros 0 80
+//Sulfuras, Hand of Ragnaros -1 80
+//Backstage passes to a TAFKAL80ETC concert 14 21
+//Backstage passes to a TAFKAL80ETC concert 9 50
+//Backstage passes to a TAFKAL80ETC concert 4 50
+//Conjured Mana Cake 2 5
+
+const items: Item[] = [
+    new Item("+5 Dexterity Vest", 10, 20), //
+    new Item("Aged Brie", 2, 0), //
+    new Item("Elixir of the Mongoose", 5, 7), //
+    new Item("Sulfuras, Hand of Ragnaros", 0, 80), //
+    new Item("Sulfuras, Hand of Ragnaros", -1, 80),
+    new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20),
+    new Item("Backstage passes to a TAFKAL80ETC concert", 10, 49),
+    new Item("Backstage passes to a TAFKAL80ETC concert", 5, 49),
+    // this conjured item does not work properly yet
+    new Item("Conjured Mana Cake", 3, 6),
+];
+let store: GildedRose;
 
 describe("Gilded Rose", function () {
-    it("should degrade items", () => {
-        const item = new DegradingItem("Item", 50, 50);
-        for (let i = 0; i < 49; i++) {
-            item.update();
-        }
-        expect(item.sellIn).to.equal(1);
-        expect(item.quality).to.equal(1);
-        expect(item.has_expired).to.equal(false);
+    beforeEach(() => {
+        store = new GildedRose(items);
     });
 
-    it("should improve items", () => {
-        const item = new ImprovingItem("Item", 50, 0);
-        for (let i = 0; i < 49; i++) {
-            item.update();
-        }
-        expect(item.sellIn).to.equal(1);
-        expect(item.quality).to.equal(49);
-        expect(item.has_expired).to.equal(false);
-    });
+    it("Updates items after 1 iteration", () => {
+        store.updateQuality();
+        expect(items[0].name).to.equal("+5 Dexterity Vest");
+        expect(items[1].name).to.equal("Aged Brie");
+        expect(items[2].name).to.equal("Elixir of the Mongoose");
+        expect(items[3].name).to.equal("Sulfuras, Hand of Ragnaros");
+        expect(items[4].name).to.equal("Sulfuras, Hand of Ragnaros");
+        expect(items[5].name).to.equal(
+            "Backstage passes to a TAFKAL80ETC concert"
+        );
+        expect(items[6].name).to.equal(
+            "Backstage passes to a TAFKAL80ETC concert"
+        );
+        expect(items[7].name).to.equal(
+            "Backstage passes to a TAFKAL80ETC concert"
+        );
+        expect(items[8].name).to.equal("Conjured Mana Cake");
 
-    it("should expire items", () => {
-        const item = new DegradingItem("Item", 50, 50);
-        for (let i = 0; i < 51; i++) {
-            item.update();
-        }
-        expect(item.sellIn).to.equal(-1);
-        expect(item.quality).to.equal(0);
-        expect(item.has_expired).to.equal(true);
-    });
-
-    it("should degrade items twice as fast after expiring", () => {
-        const item = new DegradingItem("Item", 0, 100);
-        for (let i = 0; i < 50; i++) {
-            item.update();
-        }
-        expect(item.sellIn).to.equal(-50);
-        expect(item.quality).to.equal(0);
-        expect(item.has_expired).to.equal(true);
-    });
-
-    it("should improve items twice as fast after expiring", () => {
-        const item = new ImprovingItem("Item", 0, 0);
-        for (let i = 0; i < 50; i++) {
-            item.update();
-        }
-        expect(item.sellIn).to.equal(-50);
-        expect(item.quality).to.equal(50);
-        expect(item.has_expired).to.equal(true);
-    });
-
-    it("should not modify legendary items", () => {
-        const item = new LegendaryItem("Item");
-        item.update();
-        expect(item.name).to.equal("Item");
-        expect(item.quality).to.equal(LegendaryItem.static_item_quality);
-    });
-
-    it("should degrade conjured items twice as fast", () => {
-        const item = new ConjuredItem("Item", 50, 100);
-        for (let i = 0; i < 50; i++) {
-            item.update();
-        }
-        expect(item.sellIn).to.equal(0);
-        expect(item.quality).to.equal(0);
-    });
-
-    it("should degrade conjured items four times as fast", () => {
-        const item = new ConjuredItem("Item", 0, 100);
-        for (let i = 0; i < 25; i++) {
-            item.update();
-        }
-        expect(item.sellIn).to.equal(-25);
-        expect(item.quality).to.equal(0);
-    });
-
-    it("should improve concert tickets", () => {
-        const item = new ConcertTicketItem("Item", 100, 0);
-        for (let i = 0; i < 25; i++) {
-            item.update();
-        }
-        expect(item.sellIn).to.equal(75);
-        expect(item.quality).to.equal(25);
-    });
-
-    it("should improve concert tickets twice as fast when there are 10 days to the concert", () => {
-        const item = new ConcertTicketItem("Item", 10, 0);
-        for (let i = 0; i < 4; i++) {
-            item.update();
-        }
-        expect(item.sellIn).to.equal(6);
-        expect(item.quality).to.equal(8);
-    });
-
-    it("should improve concert tickets three times as fast when there are 5 days to the concert", () => {
-        const item = new ConcertTicketItem("Item", 5, 0);
-        for (let i = 0; i < 5; i++) {
-            item.update();
-        }
-        expect(item.sellIn).to.equal(0);
-        expect(item.quality).to.equal(15);
-    });
-
-    it("should remove the quality concert tickets the day after they've expired", () => {
-        const item = new ConcertTicketItem("Item", 5, 0);
-        for (let i = 0; i < 6; i++) {
-            item.update();
-        }
-        expect(item.sellIn).to.equal(-1);
-        expect(item.quality).to.equal(0);
+        expect(items[0].quality).to.equal(19);
+        expect(items[1].quality).to.equal(1);
+        expect(items[2].quality).to.equal(6);
+        expect(items[3].quality).to.equal(80);
+        expect(items[4].quality).to.equal(80);
+        expect(items[5].quality).to.equal(21);
+        expect(items[6].quality).to.equal(50);
+        expect(items[7].quality).to.equal(50);
+        expect(items[8].quality).to.equal(5);
     });
 });
