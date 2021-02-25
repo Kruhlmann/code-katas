@@ -51,15 +51,9 @@ describe("Gilded Rose", function () {
         expect(items[2].name).to.equal("Elixir of the Mongoose");
         expect(items[3].name).to.equal("Sulfuras, Hand of Ragnaros");
         expect(items[4].name).to.equal("Sulfuras, Hand of Ragnaros");
-        expect(items[5].name).to.equal(
-            "Backstage passes to a TAFKAL80ETC concert"
-        );
-        expect(items[6].name).to.equal(
-            "Backstage passes to a TAFKAL80ETC concert"
-        );
-        expect(items[7].name).to.equal(
-            "Backstage passes to a TAFKAL80ETC concert"
-        );
+        expect(items[5].name).to.equal("Backstage passes to a TAFKAL80ETC concert");
+        expect(items[6].name).to.equal("Backstage passes to a TAFKAL80ETC concert");
+        expect(items[7].name).to.equal("Backstage passes to a TAFKAL80ETC concert");
         expect(items[8].name).to.equal("Conjured Mana Cake");
 
         expect(items[0].quality).to.equal(19);
@@ -71,5 +65,15 @@ describe("Gilded Rose", function () {
         expect(items[6].quality).to.equal(50);
         expect(items[7].quality).to.equal(50);
         expect(items[8].quality).to.equal(5);
+
+        expect(items[0].sellIn).to.equal(9);
+        expect(items[1].sellIn).to.equal(1);
+        expect(items[2].sellIn).to.equal(4);
+        expect(items[3].sellIn).to.equal(0);
+        expect(items[4].sellIn).to.equal(-1);
+        expect(items[5].sellIn).to.equal(14);
+        expect(items[6].sellIn).to.equal(9);
+        expect(items[7].sellIn).to.equal(4);
+        expect(items[8].sellIn).to.equal(2);
     });
 });
