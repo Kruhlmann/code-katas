@@ -55,7 +55,7 @@ export class GildedRose {
 
     private update_non_brie_item_expiration(item: Item) {
         if (item.name != "Backstage passes to a TAFKAL80ETC concert") {
-            this.decrease_quality_if_item_has_quality(item);
+            this.decrease_item_quality_if_has_quality(item);
         } else {
             item.quality = 0;
         }
@@ -63,18 +63,22 @@ export class GildedRose {
 
     private update_item_quality(item: Item) {
         if (item.name != "Aged Brie" && item.name != "Backstage passes to a TAFKAL80ETC concert") {
-            this.decrease_quality_if_item_has_quality(item);
+            this.decrease_item_quality_if_has_quality(item);
         } else {
             this.increase_back_stage_pass_quality(item);
         }
     }
 
-    private decrease_quality_if_item_has_quality(item: Item) {
+    private decrease_item_quality_if_has_quality(item: Item) {
         if (item.quality > 0) {
             if (item.name != "Sulfuras, Hand of Ragnaros") {
-                item.quality = item.quality - 1;
+                this.decrease_item_quality(item);
             }
         }
+    }
+
+    private decrease_item_quality(item: Item) {
+        item.quality--;
     }
 
     private increase_back_stage_pass_quality(item: Item) {
