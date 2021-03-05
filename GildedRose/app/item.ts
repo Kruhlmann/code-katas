@@ -18,17 +18,15 @@ class SpecialItemNames {
 
 abstract class ItemHandler {
     protected readonly item: GildedRoseItem;
-    public readonly is_backstage_pass: boolean;
-    public readonly is_sulfuras_hand_of_ragnaros: boolean;
 
     public constructor(item: GildedRoseItem) {
         this.item = item;
-        this.is_backstage_pass = item.name === SpecialItemNames.BACKSTAGE_PASS;
-        this.is_sulfuras_hand_of_ragnaros = item.name === SpecialItemNames.SULFURAS_HAND_OF_RAGNAROS;
     }
 
     public abstract run(): void;
     public abstract update_quality(): void;
+    public abstract is_backstage_pass(): boolean;
+    public abstract is_sulfuras_hand_of_ragnaros(): boolean;
 }
 
 class AgedBrie extends ItemHandler {
@@ -39,19 +37,35 @@ class AgedBrie extends ItemHandler {
     public update_quality(): void {
         this.item.increase_back_stage_pass_quality();
     }
+
+    public is_backstage_pass(): boolean {
+        return false;
+    }
+
+    public is_sulfuras_hand_of_ragnaros(): boolean {
+        return false;
+    }
 }
 
 class NotAgedBrie extends ItemHandler {
     public run(): void {
-        if (!this.is_backstage_pass) {
+        if (!this.is_backstage_pass()) {
             this.item.decrease_quality_if_non_zero();
         } else {
             this.item.quality = 0;
         }
     }
 
+    public is_backstage_pass(): boolean {
+        return this.item.name === SpecialItemNames.BACKSTAGE_PASS;
+    }
+
+    public is_sulfuras_hand_of_ragnaros(): boolean {
+        return this.item.name === SpecialItemNames.SULFURAS_HAND_OF_RAGNAROS;
+    }
+
     public update_quality(): void {
-        if (!this.is_backstage_pass) {
+        if (!this.is_backstage_pass()) {
             this.item.decrease_quality_if_non_zero();
         } else {
             this.item.increase_back_stage_pass_quality();
@@ -117,11 +131,11 @@ export class GildedRoseItem extends Item {
         }
     }
     private can_have_modified_quality(): boolean {
-        return !this.aged_brie.is_sulfuras_hand_of_ragnaros;
+        return !this.aged_brie.is_sulfuras_hand_of_ragnaros();
     }
 
     private can_expire(): boolean {
-        return !this.aged_brie.is_sulfuras_hand_of_ragnaros;
+        return !this.aged_brie.is_sulfuras_hand_of_ragnaros();
     }
 
     public increase_back_stage_pass_quality(): void {
@@ -132,7 +146,7 @@ export class GildedRoseItem extends Item {
     }
 
     private increase_quality_if_backstage_pass(): void {
-        if (this.aged_brie.is_backstage_pass) {
+        if (this.aged_brie.is_backstage_pass()) {
             this.increase_back_stage_pass_quality_if_far_from_expiring();
             this.increase_back_stage_pass_quality_if_close_to_expiring();
         }
