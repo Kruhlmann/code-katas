@@ -10,6 +10,12 @@ class Item {
     }
 }
 
+class SpecialItemNames {
+    public static readonly AGED_BRIE = "Aged Brie";
+    public static readonly BACKSTAGE_PASS = "Backstage passes to a TAFKAL80ETC concert";
+    public static readonly SULFURAS_HAND_OF_RAGNAROS = "Sulfuras, Hand of Ragnaros";
+}
+
 export class GildedRoseItem extends Item {
     private is_aged_brie: boolean;
     private is_backstage_pass: boolean;
@@ -17,9 +23,9 @@ export class GildedRoseItem extends Item {
 
     public constructor(name: string, sellIn: number, quality: number) {
         super(name, sellIn, quality);
-        this.is_aged_brie = this.name === "Aged Brie";
-        this.is_backstage_pass = this.name === "Backstage passes to a TAFKAL80ETC concert";
-        this.is_sulfuras_hand_of_ragnaros = this.name === "Sulfuras, Hand of Ragnaros";
+        this.is_aged_brie = this.name === SpecialItemNames.AGED_BRIE;
+        this.is_backstage_pass = this.name === SpecialItemNames.BACKSTAGE_PASS;
+        this.is_sulfuras_hand_of_ragnaros = this.name === SpecialItemNames.SULFURAS_HAND_OF_RAGNAROS;
     }
 
     public update(): void {
