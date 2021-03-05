@@ -11,13 +11,24 @@ class Item {
 }
 
 export class GildedRoseItem extends Item {
+    private is_aged_brie: boolean;
+    private is_backstage_pass: boolean;
+    private is_sulfuras_hand_of_ragnaros: boolean;
+
+    public constructor(name: string, sellIn: number, quality: number) {
+        super(name, sellIn, quality);
+        this.is_aged_brie = this.name === "Aged Brie";
+        this.is_backstage_pass = this.name === "Backstage passes to a TAFKAL80ETC concert";
+        this.is_sulfuras_hand_of_ragnaros = this.name === "Sulfuras, Hand of Ragnaros";
+    }
+
     public update(): void {
         this.update_quality();
         this.update_sell_in_date();
     }
 
     private update_quality(): void {
-        if (!this.is_aged_brie() && !this.is_backstage_pass()) {
+        if (!this.is_aged_brie && !this.is_backstage_pass) {
             this.decrease_quality_if_non_zero();
         } else {
             this.increase_back_stage_pass_quality();
@@ -36,7 +47,7 @@ export class GildedRoseItem extends Item {
     }
 
     private update_expiration(): void {
-        if (this.name != "Aged Brie") {
+        if (this.is_aged_brie) {
             this.handle_expiration();
         } else {
             this.increase_item_quality_if_not_max();
@@ -70,25 +81,12 @@ export class GildedRoseItem extends Item {
             this.increase_quality();
         }
     }
-
-    private is_sulfuras_hand_of_ragnaros(): boolean {
-        return this.name === "Sulfuras, Hand of Ragnaros";
-    }
-
     private can_have_modified_quality(): boolean {
-        return !this.is_sulfuras_hand_of_ragnaros();
+        return !this.is_sulfuras_hand_of_ragnaros;
     }
 
     private can_expire(): boolean {
-        return !this.is_sulfuras_hand_of_ragnaros();
-    }
-
-    private is_backstage_pass(): boolean {
-        return this.name == "Backstage passes to a TAFKAL80ETC concert";
-    }
-
-    private is_aged_brie(): boolean {
-        return this.name === "Aged Brie";
+        return !this.is_sulfuras_hand_of_ragnaros;
     }
 
     private increase_back_stage_pass_quality(): void {
@@ -99,7 +97,7 @@ export class GildedRoseItem extends Item {
     }
 
     private increase_quality_if_backstage_pass(): void {
-        if (this.is_backstage_pass()) {
+        if (this.is_backstage_pass) {
             this.increase_back_stage_pass_quality_if_far_from_expiring();
             this.increase_back_stage_pass_quality_if_close_to_expiring();
         }
@@ -124,7 +122,7 @@ export class GildedRoseItem extends Item {
     }
 
     private handle_expiration() {
-        if (!this.is_backstage_pass()) {
+        if (!this.is_backstage_pass) {
             this.decrease_quality_if_non_zero();
         } else {
             this.quality = 0;
