@@ -1,5 +1,6 @@
 import { expect } from "chai";
-import { Item, GildedRose } from "../app/gilded-rose";
+import { GildedRose } from "../app/gilded-rose";
+import { GildedRoseItem } from "../app/item";
 
 //-------- day 0 --------
 //name, sellIn, quality
@@ -25,17 +26,17 @@ import { Item, GildedRose } from "../app/gilded-rose";
 //Backstage passes to a TAFKAL80ETC concert 4 50
 //Conjured Mana Cake 2 5
 
-const items: Item[] = [
-    new Item("+5 Dexterity Vest", 10, 20), //
-    new Item("Aged Brie", 2, 0), //
-    new Item("Elixir of the Mongoose", 5, 7), //
-    new Item("Sulfuras, Hand of Ragnaros", 0, 80), //
-    new Item("Sulfuras, Hand of Ragnaros", -1, 80),
-    new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20),
-    new Item("Backstage passes to a TAFKAL80ETC concert", 10, 49),
-    new Item("Backstage passes to a TAFKAL80ETC concert", 5, 49),
+const items: GildedRoseItem[] = [
+    new GildedRoseItem("+5 Dexterity Vest", 10, 20), //
+    new GildedRoseItem("Aged Brie", 2, 0), //
+    new GildedRoseItem("Elixir of the Mongoose", 5, 7), //
+    new GildedRoseItem("Sulfuras, Hand of Ragnaros", 0, 80), //
+    new GildedRoseItem("Sulfuras, Hand of Ragnaros", -1, 80),
+    new GildedRoseItem("Backstage passes to a TAFKAL80ETC concert", 15, 20),
+    new GildedRoseItem("Backstage passes to a TAFKAL80ETC concert", 10, 49),
+    new GildedRoseItem("Backstage passes to a TAFKAL80ETC concert", 5, 49),
     // this conjured item does not work properly yet
-    new Item("Conjured Mana Cake", 3, 6),
+    new GildedRoseItem("Conjured Mana Cake", 3, 6),
 ];
 let store: GildedRose;
 

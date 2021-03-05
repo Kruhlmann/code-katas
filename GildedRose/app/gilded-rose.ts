@@ -1,23 +1,13 @@
-export class Item {
-    name: string;
-    sellIn: number;
-    quality: number;
-
-    constructor(name: string, sellIn: number, quality: number) {
-        this.name = name;
-        this.sellIn = sellIn;
-        this.quality = quality;
-    }
-}
+import { GildedRoseItem } from "./item";
 
 export class GildedRose {
-    items: Array<Item>;
+    items: Array<GildedRoseItem>;
 
-    public constructor(items = [] as Array<Item>) {
+    public constructor(items = [] as Array<GildedRoseItem>) {
         this.items = items;
     }
 
-    public updateQuality(): Item[] {
+    public updateQuality(): GildedRoseItem[] {
         for (const item of this.items) {
             this.update_item_quality(item);
             this.update_item_sell_in_date(item);
@@ -26,20 +16,20 @@ export class GildedRose {
         return this.items;
     }
 
-    private update_item_sell_in_date(item: Item) {
+    private update_item_sell_in_date(item: GildedRoseItem) {
         if (item.name != "Sulfuras, Hand of Ragnaros") {
             item.sellIn = item.sellIn - 1;
         }
         this.update_items_expiration_if_expired(item);
     }
 
-    private update_items_expiration_if_expired(item: Item) {
+    private update_items_expiration_if_expired(item: GildedRoseItem) {
         if (item.sellIn < 0) {
             this.update_item_expiration(item);
         }
     }
 
-    private update_item_expiration(item: Item) {
+    private update_item_expiration(item: GildedRoseItem) {
         if (item.name != "Aged Brie") {
             this.update_non_brie_item_expiration(item);
         } else {
@@ -47,13 +37,13 @@ export class GildedRose {
         }
     }
 
-    private update_brie_item_expiration(item: Item) {
+    private update_brie_item_expiration(item: GildedRoseItem) {
         if (item.quality < 50) {
             item.quality = item.quality + 1;
         }
     }
 
-    private update_non_brie_item_expiration(item: Item) {
+    private update_non_brie_item_expiration(item: GildedRoseItem) {
         if (item.name != "Backstage passes to a TAFKAL80ETC concert") {
             this.decrease_item_quality_if_has_quality(item);
         } else {
@@ -61,7 +51,7 @@ export class GildedRose {
         }
     }
 
-    private update_item_quality(item: Item) {
+    private update_item_quality(item: GildedRoseItem) {
         if (item.name != "Aged Brie" && item.name != "Backstage passes to a TAFKAL80ETC concert") {
             this.decrease_item_quality_if_has_quality(item);
         } else {
@@ -69,51 +59,37 @@ export class GildedRose {
         }
     }
 
-    private decrease_item_quality_if_has_quality(item: Item) {
+    private decrease_item_quality_if_has_quality(item: GildedRoseItem) {
         if (item.quality > 0) {
             if (item.name != "Sulfuras, Hand of Ragnaros") {
-                this.decrease_item_quality(item);
+                item.decrease_quality();
             }
         }
     }
 
-    private decrease_item_quality(item: Item) {
-        item.quality--;
-    }
-
-    private increase_back_stage_pass_quality(item: Item) {
+    private increase_back_stage_pass_quality(item: GildedRoseItem) {
+        item.increase_item_quality_if_not_max();
         if (item.quality < 50) {
-            this.increase_item_quality_if_not_max(item);
             this.increase_back_stage_pass_quality_from_expiration(item);
         }
     }
 
-    private increase_back_stage_pass_quality_from_expiration(item: Item) {
+    private increase_back_stage_pass_quality_from_expiration(item: GildedRoseItem) {
         if (item.name == "Backstage passes to a TAFKAL80ETC concert") {
             this.increase_back_stage_pass_quality_if_far_from_expiring(item);
             this.increase_back_stage_pass_quality_if_close_to_expiring(item);
         }
     }
 
-    private increase_back_stage_pass_quality_if_close_to_expiring(item: Item) {
+    private increase_back_stage_pass_quality_if_close_to_expiring(item: GildedRoseItem) {
         if (item.sellIn < 6) {
-            this.increase_item_quality_if_not_max(item);
+            item.increase_item_quality_if_not_max();
         }
     }
 
-    private increase_back_stage_pass_quality_if_far_from_expiring(item: Item) {
+    private increase_back_stage_pass_quality_if_far_from_expiring(item: GildedRoseItem) {
         if (item.sellIn < 11) {
-            this.increase_item_quality_if_not_max(item);
+            item.increase_item_quality_if_not_max();
         }
-    }
-
-    private increase_item_quality_if_not_max(item: Item) {
-        if (item.quality < 50) {
-            this.increase_item_quality(item);
-        }
-    }
-
-    private increase_item_quality(item: Item) {
-        item.quality++;
     }
 }
