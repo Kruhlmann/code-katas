@@ -16,44 +16,51 @@ class SpecialItemNames {
     public static readonly SULFURAS_HAND_OF_RAGNAROS = "Sulfuras, Hand of Ragnaros";
 }
 
-class ItemHandler {
+abstract class ItemHandler {
     protected readonly item: GildedRoseItem;
+    public readonly is_backstage_pass: boolean;
+    public readonly is_sulfuras_hand_of_ragnaros: boolean;
 
     public constructor(item: GildedRoseItem) {
         this.item = item;
+        this.is_backstage_pass = item.name === SpecialItemNames.BACKSTAGE_PASS;
+        this.is_sulfuras_hand_of_ragnaros = item.name === SpecialItemNames.SULFURAS_HAND_OF_RAGNAROS;
     }
 
     public abstract run(): void;
+    public abstract update_quality(): void;
 }
 
-class ImprovingExpirationHandler extends ItemHandler {
+class AgedBrie extends ItemHandler {
     public run(): void {
         this.item.increase_item_quality_if_not_max();
     }
+
+    public update_quality(): void {
+        this.item.increase_back_stage_pass_quality();
+    }
 }
 
-class DegradingExpirationHandler extends ItemHandler {
+class NotAgedBrie extends ItemHandler {
     public run(): void {
-        if (!this.item.is_backstage_pass) {
+        if (!this.is_backstage_pass) {
             this.item.decrease_quality_if_non_zero();
         } else {
             this.item.quality = 0;
         }
     }
-}
 
-abstract class NonBrieNonBackstageQualityHandler extends ItemHandler {
-    public run(): void {
-        if (this.item.quality > 0) {
-            this.item.decrease_quality();
+    public update_quality(): void {
+        if (!this.is_backstage_pass) {
+            this.item.decrease_quality_if_non_zero();
+        } else {
+            this.item.increase_back_stage_pass_quality();
         }
     }
 }
 
 export class GildedRoseItem extends Item {
-    private expiration_handler: ItemHandler;
-    private is_backstage_pass: boolean;
-    private is_sulfuras_hand_of_ragnaros: boolean;
+    private aged_brie: ItemHandler;
 
     private readonly MAX_QUALITY = 50;
     private readonly BACKSTAGE_PASS_FAR_DATE_LIMIT = 11;
@@ -61,24 +68,17 @@ export class GildedRoseItem extends Item {
 
     public constructor(name: string, sellIn: number, quality: number) {
         super(name, sellIn, quality);
-        this.expiration_handler =
-            this.name === SpecialItemNames.AGED_BRIE
-                ? new ImprovingExpirationHandler(this)
-                : new DegradingExpirationHandler(this);
-        this.is_backstage_pass = this.name === SpecialItemNames.BACKSTAGE_PASS;
-        this.is_sulfuras_hand_of_ragnaros = this.name === SpecialItemNames.SULFURAS_HAND_OF_RAGNAROS;
+        this.aged_brie = this.name === SpecialItemNames.AGED_BRIE ? new AgedBrie(this) : new NotAgedBrie(this);
     }
 
     public update(): void {
-        this.update_quality();
+        this.aged_brie.update_quality();
         this.update_sell_in_date();
     }
 
-    private update_quality(): void {
-        if (!this.is_aged_brie && !this.is_backstage_pass) {
-            this.decrease_quality_if_non_zero();
-        } else {
-            this.increase_back_stage_pass_quality();
+    public decrease_quality_if_non_zero(): void {
+        if (this.quality > 0) {
+            this.decrease_quality();
         }
     }
 
@@ -91,7 +91,7 @@ export class GildedRoseItem extends Item {
 
     private update_expiration_if_not_expired(): void {
         if (this.is_expired()) {
-            this.expiration_handler.run();
+            this.aged_brie.run();
         }
     }
 
@@ -117,14 +117,14 @@ export class GildedRoseItem extends Item {
         }
     }
     private can_have_modified_quality(): boolean {
-        return !this.is_sulfuras_hand_of_ragnaros;
+        return !this.aged_brie.is_sulfuras_hand_of_ragnaros;
     }
 
     private can_expire(): boolean {
-        return !this.is_sulfuras_hand_of_ragnaros;
+        return !this.aged_brie.is_sulfuras_hand_of_ragnaros;
     }
 
-    private increase_back_stage_pass_quality(): void {
+    public increase_back_stage_pass_quality(): void {
         this.increase_item_quality_if_not_max();
         if (this.quality < this.MAX_QUALITY) {
             this.increase_quality_if_backstage_pass();
@@ -132,7 +132,7 @@ export class GildedRoseItem extends Item {
     }
 
     private increase_quality_if_backstage_pass(): void {
-        if (this.is_backstage_pass) {
+        if (this.aged_brie.is_backstage_pass) {
             this.increase_back_stage_pass_quality_if_far_from_expiring();
             this.increase_back_stage_pass_quality_if_close_to_expiring();
         }
