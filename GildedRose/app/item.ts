@@ -21,6 +21,10 @@ export class GildedRoseItem extends Item {
     private is_backstage_pass: boolean;
     private is_sulfuras_hand_of_ragnaros: boolean;
 
+    private readonly MAX_QUALITY = 50;
+    private readonly BACKSTAGE_PASS_FAR_DATE_LIMIT = 11;
+    private readonly BACKSTAGE_PASS_CLOSE_DATE_LIMIT = 6;
+
     public constructor(name: string, sellIn: number, quality: number) {
         super(name, sellIn, quality);
         this.is_aged_brie = this.name === SpecialItemNames.AGED_BRIE;
@@ -83,7 +87,7 @@ export class GildedRoseItem extends Item {
     }
 
     private increase_item_quality_if_not_max(): void {
-        if (this.quality < 50) {
+        if (this.quality < this.MAX_QUALITY) {
             this.increase_quality();
         }
     }
@@ -97,7 +101,7 @@ export class GildedRoseItem extends Item {
 
     private increase_back_stage_pass_quality(): void {
         this.increase_item_quality_if_not_max();
-        if (this.quality < 50) {
+        if (this.quality < this.MAX_QUALITY) {
             this.increase_quality_if_backstage_pass();
         }
     }
@@ -110,7 +114,7 @@ export class GildedRoseItem extends Item {
     }
 
     private increase_back_stage_pass_quality_if_far_from_expiring(): void {
-        if (this.sellIn < 11) {
+        if (this.sellIn < this.BACKSTAGE_PASS_FAR_DATE_LIMIT) {
             this.increase_item_quality_if_not_max();
         }
     }
@@ -122,7 +126,7 @@ export class GildedRoseItem extends Item {
     }
 
     private increase_back_stage_pass_quality_if_close_to_expiring(): void {
-        if (this.sellIn < 6) {
+        if (this.sellIn < this.BACKSTAGE_PASS_CLOSE_DATE_LIMIT) {
             this.increase_item_quality_if_not_max();
         }
     }
