@@ -70,14 +70,7 @@ export class GildedRose {
     private increase_back_stage_pass_quality(item: GildedRoseItem) {
         item.increase_item_quality_if_not_max();
         if (item.quality < 50) {
-            this.increase_back_stage_pass_quality_from_expiration(item);
-        }
-    }
-
-    private increase_back_stage_pass_quality_from_expiration(item: GildedRoseItem) {
-        if (item.name == "Backstage passes to a TAFKAL80ETC concert") {
-            item.increase_back_stage_pass_quality_if_far_from_expiring();
-            item.increase_back_stage_pass_quality_if_close_to_expiring();
+            item.increase_quality_if_backstage_pass();
         }
     }
 }
