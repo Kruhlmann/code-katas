@@ -39,7 +39,7 @@ export class GildedRose {
 
     private update_brie_item_expiration(item: GildedRoseItem) {
         if (item.quality < 50) {
-            item.quality = item.quality + 1;
+            item.increase_quality();
         }
     }
 
