@@ -24,4 +24,16 @@ export class GildedRoseItem extends Item {
             this.increase_quality();
         }
     }
+
+    public increase_back_stage_pass_quality_if_far_from_expiring(): void {
+        if (this.sellIn < 11) {
+            this.increase_item_quality_if_not_max();
+        }
+    }
+
+    public increase_back_stage_pass_quality_if_close_to_expiring(): void {
+        if (this.sellIn < 6) {
+            this.increase_item_quality_if_not_max();
+        }
+    }
 }
