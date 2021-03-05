@@ -45,13 +45,9 @@ export class GildedRoseItem extends Item {
         }
     }
 
-    private decrease_sell_in_date(): void {
-        this.sellIn--;
-    }
-
     private update_sell_in_date(): void {
         if (this.can_expire()) {
-            this.decrease_sell_in_date();
+            this.sellIn--;
         }
         this.update_expiration_if_not_expired();
     }
