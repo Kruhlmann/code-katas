@@ -16,8 +16,42 @@ class SpecialItemNames {
     public static readonly SULFURAS_HAND_OF_RAGNAROS = "Sulfuras, Hand of Ragnaros";
 }
 
+class ItemHandler {
+    protected readonly item: GildedRoseItem;
+
+    public constructor(item: GildedRoseItem) {
+        this.item = item;
+    }
+
+    public abstract run(): void;
+}
+
+class ImprovingExpirationHandler extends ItemHandler {
+    public run(): void {
+        this.item.increase_item_quality_if_not_max();
+    }
+}
+
+class DegradingExpirationHandler extends ItemHandler {
+    public run(): void {
+        if (!this.item.is_backstage_pass) {
+            this.item.decrease_quality_if_non_zero();
+        } else {
+            this.item.quality = 0;
+        }
+    }
+}
+
+abstract class NonBrieNonBackstageQualityHandler extends ItemHandler {
+    public run(): void {
+        if (this.item.quality > 0) {
+            this.item.decrease_quality();
+        }
+    }
+}
+
 export class GildedRoseItem extends Item {
-    private is_aged_brie: boolean;
+    private expiration_handler: ItemHandler;
     private is_backstage_pass: boolean;
     private is_sulfuras_hand_of_ragnaros: boolean;
 
@@ -27,7 +61,10 @@ export class GildedRoseItem extends Item {
 
     public constructor(name: string, sellIn: number, quality: number) {
         super(name, sellIn, quality);
-        this.is_aged_brie = this.name === SpecialItemNames.AGED_BRIE;
+        this.expiration_handler =
+            this.name === SpecialItemNames.AGED_BRIE
+                ? new ImprovingExpirationHandler(this)
+                : new DegradingExpirationHandler(this);
         this.is_backstage_pass = this.name === SpecialItemNames.BACKSTAGE_PASS;
         this.is_sulfuras_hand_of_ragnaros = this.name === SpecialItemNames.SULFURAS_HAND_OF_RAGNAROS;
     }
@@ -52,17 +89,9 @@ export class GildedRoseItem extends Item {
         this.update_expiration_if_not_expired();
     }
 
-    private update_expiration(): void {
-        if (this.is_aged_brie) {
-            this.handle_expiration();
-        } else {
-            this.increase_item_quality_if_not_max();
-        }
-    }
-
     private update_expiration_if_not_expired(): void {
         if (this.is_expired()) {
-            this.update_expiration();
+            this.expiration_handler.run();
         }
     }
 
@@ -82,7 +111,7 @@ export class GildedRoseItem extends Item {
         }
     }
 
-    private increase_item_quality_if_not_max(): void {
+    public increase_item_quality_if_not_max(): void {
         if (this.quality < this.MAX_QUALITY) {
             this.increase_quality();
         }
@@ -115,23 +144,9 @@ export class GildedRoseItem extends Item {
         }
     }
 
-    private decrease_quality_if_non_zero(): void {
-        if (this.quality > 0) {
-            this.decrease_quality();
-        }
-    }
-
     private increase_back_stage_pass_quality_if_close_to_expiring(): void {
         if (this.sellIn < this.BACKSTAGE_PASS_CLOSE_DATE_LIMIT) {
             this.increase_item_quality_if_not_max();
-        }
-    }
-
-    private handle_expiration() {
-        if (!this.is_backstage_pass) {
-            this.decrease_quality_if_non_zero();
-        } else {
-            this.quality = 0;
         }
     }
 }
