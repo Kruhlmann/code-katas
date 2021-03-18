@@ -1,4 +1,6 @@
-import { AgedBrie, ItemHandler, NotAgedBrie } from "./aged_brie";
+import { AgedBrie, NotAgedBrie } from "./aged_brie";
+import { BackstagePass, NotBackstagePass } from "./backstage_pass";
+import { IItemHandler } from "./item_handler";
 
 class Item {
     name: string;
@@ -12,42 +14,6 @@ class Item {
     }
 }
 
-class BackstagePass extends AgedBrie {
-    public is_backstage_pass(): boolean {
-        return true;
-    }
-
-    public is_sulfuras_hand_of_ragnaros(): boolean {
-        return false;
-    }
-
-    public update_quality(): void {
-        this.item.increase_back_stage_pass_quality();
-    }
-
-    public update_expiration(): void {
-        this.item.quality = 0;
-    }
-}
-
-class NotBackstagePass extends AgedBrie {
-    public is_backstage_pass(): boolean {
-        return false;
-    }
-
-    public is_sulfuras_hand_of_ragnaros(): boolean {
-        return this.item.name === SpecialItemNames.SULFURAS_HAND_OF_RAGNAROS;
-    }
-
-    public update_quality(): void {
-        this.item.decrease_quality_if_non_zero();
-    }
-
-    public update_expiration(): void {
-        this.item.decrease_quality_if_non_zero();
-    }
-}
-
 export class SpecialItemNames {
     public static readonly AGED_BRIE = "Aged Brie";
     public static readonly BACKSTAGE_PASS = "Backstage passes to a TAFKAL80ETC concert";
@@ -55,12 +21,12 @@ export class SpecialItemNames {
 }
 
 export class GildedRoseItem extends Item {
-    public readonly aged_brie: ItemHandler;
-    public readonly backstage_pass: ItemHandler;
+    public readonly aged_brie: IItemHandler;
+    public readonly backstage_pass: IItemHandler;
 
-    private readonly MAX_QUALITY = 50;
-    private readonly BACKSTAGE_PASS_FAR_DATE_LIMIT = 11;
-    private readonly BACKSTAGE_PASS_CLOSE_DATE_LIMIT = 6;
+    public readonly MAX_QUALITY = 50;
+    public readonly BACKSTAGE_PASS_FAR_DATE_LIMIT = 11;
+    public readonly BACKSTAGE_PASS_CLOSE_DATE_LIMIT = 6;
 
     public constructor(name: string, sellIn: number, quality: number) {
         super(name, sellIn, quality);
@@ -120,31 +86,5 @@ export class GildedRoseItem extends Item {
 
     private can_expire(): boolean {
         return !this.aged_brie.is_sulfuras_hand_of_ragnaros();
-    }
-
-    public increase_back_stage_pass_quality(): void {
-        this.increase_item_quality_if_not_max();
-        if (this.quality < this.MAX_QUALITY) {
-            this.increase_quality_if_backstage_pass();
-        }
-    }
-
-    private increase_quality_if_backstage_pass(): void {
-        if (this.backstage_pass.is_backstage_pass()) {
-            this.increase_back_stage_pass_quality_if_far_from_expiring();
-            this.increase_back_stage_pass_quality_if_close_to_expiring();
-        }
-    }
-
-    private increase_back_stage_pass_quality_if_far_from_expiring(): void {
-        if (this.sellIn < this.BACKSTAGE_PASS_FAR_DATE_LIMIT) {
-            this.increase_item_quality_if_not_max();
-        }
-    }
-
-    private increase_back_stage_pass_quality_if_close_to_expiring(): void {
-        if (this.sellIn < this.BACKSTAGE_PASS_CLOSE_DATE_LIMIT) {
-            this.increase_item_quality_if_not_max();
-        }
     }
 }
