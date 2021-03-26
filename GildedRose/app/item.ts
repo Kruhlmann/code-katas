@@ -1,6 +1,13 @@
 import { AgedBrie, NotAgedBrie } from "./aged_brie";
 import { BackstagePass, NotBackstagePass } from "./backstage_pass";
 import { IItemHandler } from "./item_handler";
+import { NotSulfuras, Sulfuras } from "./sulfuras";
+
+export interface IItem {
+    name: string;
+    sellIn: number;
+    quality: number;
+}
 
 class Item {
     name: string;
@@ -23,6 +30,7 @@ export class SpecialItemNames {
 export class GildedRoseItem extends Item {
     public readonly aged_brie: IItemHandler;
     public readonly backstage_pass: IItemHandler;
+    public readonly sulfuras: IItemHandler;
 
     public readonly MAX_QUALITY = 50;
     public readonly BACKSTAGE_PASS_FAR_DATE_LIMIT = 11;
@@ -33,6 +41,8 @@ export class GildedRoseItem extends Item {
         this.aged_brie = this.name === SpecialItemNames.AGED_BRIE ? new AgedBrie(this) : new NotAgedBrie(this);
         this.backstage_pass =
             this.name === SpecialItemNames.BACKSTAGE_PASS ? new BackstagePass(this) : new NotBackstagePass(this);
+        this.sulfuras =
+            this.name === SpecialItemNames.SULFURAS_HAND_OF_RAGNAROS ? new Sulfuras(this) : new NotSulfuras(this);
     }
 
     public update(): void {

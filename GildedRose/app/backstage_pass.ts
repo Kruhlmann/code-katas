@@ -37,14 +37,10 @@ export class NotBackstagePass extends ItemHandler {
     }
 
     public update_quality(): void {
-        this.item.decrease_quality_if_non_zero();
+        this.item.sulfuras.update_quality();
     }
 
     public update_expiration(): void {
-        this.item.decrease_quality_if_non_zero();
-    }
-
-    public increase_quality_including_backstage_passes(): void {
-        this.item.increase_item_quality_if_not_max();
+        this.item.sulfuras.update_expiration();
     }
 }
