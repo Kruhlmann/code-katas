@@ -1,10 +1,9 @@
-import { GildedRoseItem } from "./item";
+import { UpdateableItem } from "./item";
 
 export interface IItemHandler {
     update(): void;
     update_expiration(): void;
     update_quality(): void;
-    is_sulfuras_hand_of_ragnaros(): boolean;
     increase_quality(): void;
     decrease_quality(): void;
     update_sell_in_date(): void;
@@ -13,9 +12,9 @@ export interface IItemHandler {
 
 export abstract class ItemHandler implements IItemHandler {
     protected readonly MAX_QUALITY = 50;
-    protected readonly item: GildedRoseItem;
+    protected readonly item: UpdateableItem;
 
-    public constructor(item: GildedRoseItem) {
+    public constructor(item: UpdateableItem) {
         this.item = item;
     }
 
@@ -61,5 +60,14 @@ export abstract class ItemHandler implements IItemHandler {
 
     public abstract update_expiration(): void;
     public abstract update_quality(): void;
-    public abstract is_sulfuras_hand_of_ragnaros(): boolean;
+}
+
+export class GenericItemHandler extends ItemHandler {
+    public update_expiration(): void {
+        this.decrease_quality_if_non_zero();
+    }
+
+    public update_quality(): void {
+        this.decrease_quality_if_non_zero();
+    }
 }
