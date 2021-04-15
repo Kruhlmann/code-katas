@@ -1,13 +1,17 @@
 import { IItemHandler } from "./item_handler";
 import { ItemHandlerFactory } from "./item_handler_factory";
 
-export interface IItem {
+interface IItem {
     name: string;
     sellIn: number;
     quality: number;
 }
 
-class Item {
+export interface IUpdateableItem extends IItem {
+    handler: IItemHandler;
+}
+
+class Item implements IItem {
     name: string;
     sellIn: number;
     quality: number;
@@ -19,7 +23,7 @@ class Item {
     }
 }
 
-export class UpdateableItem extends Item {
+export class UpdateableItem extends Item implements IUpdateableItem {
     public readonly handler: IItemHandler;
 
     public constructor(name: string, sellIn: number, quality: number) {
