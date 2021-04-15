@@ -12,22 +12,14 @@ export interface IUpdateableItem extends IItem {
 }
 
 class Item implements IItem {
-    name: string;
-    sellIn: number;
-    quality: number;
-
-    constructor(name: string, sellIn: number, quality: number) {
-        this.name = name;
-        this.sellIn = sellIn;
-        this.quality = quality;
-    }
+    constructor(public name: string, public sellIn: number, public quality: number) {}
 }
 
 export class UpdateableItem extends Item implements IUpdateableItem {
     public readonly handler: IItemHandler;
 
-    public constructor(name: string, sellIn: number, quality: number) {
+    public constructor(name: string, sellIn: number, quality: number, configuration: Record<string, string>) {
         super(name, sellIn, quality);
-        this.handler = new ItemHandlerFactory().create_item_handler_from_item(this);
+        this.handler = new ItemHandlerFactory(configuration).create_item_handler_from_item(this);
     }
 }
