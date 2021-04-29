@@ -63,4 +63,11 @@ describe("Gilded Rose", function () {
         expect(items[8].sell_in).to.equal(2);
         expect(items[9].sell_in).to.equal(-1);
     });
+
+    it("Updates items after 10 iterations", () => {
+        for (let _ = 0; _ < 10; _++) {
+            store.updateQuality();
+        }
+        expect(items[7].quality).to.equal(0);
+    });
 });
