@@ -1,15 +1,15 @@
-import { UpdateableItem } from "./item";
+import { IItem } from "./item";
 
 export class GildedRose {
-    items: Array<UpdateableItem>;
+    items: Array<IItem>;
 
-    public constructor(items = [] as Array<UpdateableItem>) {
+    public constructor(items = [] as IItem[]) {
         this.items = items;
     }
 
-    public updateQuality(): UpdateableItem[] {
+    public updateQuality(): IItem[] {
         for (const item of this.items) {
-            item.handler.update();
+            item.update();
         }
 
         return this.items;

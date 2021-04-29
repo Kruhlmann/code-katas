@@ -1,6 +1,6 @@
-import { ItemHandler } from "./item_handler";
+import { IItem, Item } from "./item";
 
-export class Sulfuras extends ItemHandler {
+export class Sulfuras extends Item implements IItem {
     public update_expiration(): void {}
 
     public update_quality(): void {}
