@@ -17,9 +17,9 @@ export abstract class Item implements IItem {
     private _sell_in: number;
     private _quality: number;
 
-    public constructor(name: string, sellIn: number, quality: number) {
+    public constructor(name: string, sell_in: number, quality: number) {
         this._name = name;
-        this._sell_in = sellIn;
+        this._sell_in = sell_in;
         this._quality = quality;
     }
 
