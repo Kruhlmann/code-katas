@@ -41,7 +41,7 @@ export class ItemHandlerFactory {
         this.string_to_special_name_lookup_table = new SpecialItemNamesLookupTable(configuration);
     }
 
-    public create_item(name: string, sell_in: number, quality: number): IItem {
+    public create(name: string, sell_in: number, quality: number): IItem {
         const converted_name = this.string_to_special_name_lookup_table.perform_lookup(name);
         const create_item = this.item_constructor_lookup_table.perform_lookup(converted_name);
         const instance = create_item(name, sell_in, quality);

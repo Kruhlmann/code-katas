@@ -7,19 +7,18 @@ import { SpecialItemNames } from "../app/special_item_names";
 const configuration = {
     "This is still Sulfuras, Hand of Ragnaros": SpecialItemNames.SULFURAS_HAND_OF_RAGNAROS,
 };
-const item_handler_factory = new ItemHandlerFactory(configuration);
+const item_factory = new ItemHandlerFactory(configuration);
 const items: IItem[] = [
-    item_handler_factory.create_item("+5 Dexterity Vest", 10, 20), //
-    item_handler_factory.create_item("Aged Brie", 2, 0), //
-    item_handler_factory.create_item("Elixir of the Mongoose", 5, 7), //
-    item_handler_factory.create_item("Sulfuras, Hand of Ragnaros", 0, 80), //
-    item_handler_factory.create_item("Sulfuras, Hand of Ragnaros", -1, 80),
-    item_handler_factory.create_item("Backstage passes to a TAFKAL80ETC concert", 15, 20),
-    item_handler_factory.create_item("Backstage passes to a TAFKAL80ETC concert", 10, 49),
-    item_handler_factory.create_item("Backstage passes to a TAFKAL80ETC concert", 5, 49),
-    // this conjured item does not work properly yet
-    item_handler_factory.create_item("Conjured Mana Cake", 3, 6),
-    item_handler_factory.create_item("This is still Sulfuras, Hand of Ragnaros", -1, 80),
+    item_factory.create("+5 Dexterity Vest", 10, 20),
+    item_factory.create("Aged Brie", 2, 0),
+    item_factory.create("Elixir of the Mongoose", 5, 7),
+    item_factory.create("Sulfuras, Hand of Ragnaros", 0, 80),
+    item_factory.create("Sulfuras, Hand of Ragnaros", -1, 80),
+    item_factory.create("Backstage passes to a TAFKAL80ETC concert", 15, 20),
+    item_factory.create("Backstage passes to a TAFKAL80ETC concert", 10, 49),
+    item_factory.create("Backstage passes to a TAFKAL80ETC concert", 5, 49),
+    item_factory.create("Conjured Mana Cake", 3, 6), // this conjured item does not work properly yet
+    item_factory.create("This is still Sulfuras, Hand of Ragnaros", -1, 80),
 ];
 let store: GildedRose;
 
