@@ -63,8 +63,8 @@ describe("Gilded Rose", function () {
         expect(items[9].sell_in).to.equal(-1);
     });
 
-    it("Updates items after 10 iterations", () => {
-        for (let _ = 0; _ < 10; _++) {
+    it("Updates items after 100 iterations", () => {
+        for (let _ = 0; _ < 100; _++) {
             store.updateQuality();
         }
         expect(items[7].quality).to.equal(0);
