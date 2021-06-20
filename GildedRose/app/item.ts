@@ -3,12 +3,6 @@ export interface IItem {
     sell_in: number;
     quality: number;
     update(): void;
-    update_expiration(): void;
-    update_quality(): void;
-    increase_quality(): void;
-    decrease_quality(): void;
-    update_sell_in_date(): void;
-    decrease_quality_if_non_zero(): void;
 }
 
 export abstract class Item implements IItem {
@@ -39,56 +33,29 @@ export abstract class Item implements IItem {
         this._quality = value;
     }
 
-    public update(): void {
-        this.update_quality();
-        this.update_sell_in_date();
+    public set sell_in(value: number) {
+        this._sell_in = value;
     }
 
-    public increase_item_quality_if_not_max(): void {
-        if (this._quality < this.MAX_QUALITY) {
-            this.increase_quality();
-        }
-    }
-
-    public increase_quality(): void {
-        this._quality++;
-    }
-
-    public decrease_quality(): void {
-        this._quality--;
-    }
-
-    public update_sell_in_date(): void {
-        this._sell_in--;
-        this.update_expiration_if_not_expired();
-    }
-
-    public decrease_quality_if_non_zero(): void {
-        if (this._quality > 0) {
-            this.decrease_quality();
-        }
-    }
-
-    public is_expired(): boolean {
-        return this._sell_in < 0;
-    }
-
-    public update_expiration_if_not_expired(): void {
-        if (this.is_expired()) {
-            this.update_expiration();
-        }
-    }
-
-    public abstract update_expiration(): void;
-    public abstract update_quality(): void;
+    public abstract update(): void;
 }
 
 export class GenericItemHandler extends Item {
-    public update_expiration(): void {
-        this.decrease_quality_if_non_zero();
+    private decrease_quality_if_non_zero(): void {
+        if (this.quality > 0) {
+            this.quality--;
+        }
     }
 
-    public update_quality(): void {
+    private decrease_quality_if_non_zero_and_is_expired() {
+        const is_expired = this.sell_in < 0;
+        if (is_expired) {
+            this.decrease_quality_if_non_zero();
+        }
+    }
+    public update(): void {
         this.decrease_quality_if_non_zero();
+        this.sell_in = this.sell_in--;
+        this.decrease_quality_if_non_zero_and_is_expired();
     }
 }
